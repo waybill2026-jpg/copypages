@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: #f4f7f6; font-family: sans-serif; }
+        .header { background: #2c3e50; color: white; padding: 20px; text-align: center; border-radius: 0 0 20px 20px; }
+        .menu-card { background: white; border: none; border-radius: 15px; text-align: center; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor:pointer; height: 100%; }
+        .menu-card i { font-size: 35px; color: #2c3e50; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h3 id="welcomeText">...</h3>
+        <div class="mt-2">
+            <span class="badge bg-light text-dark p-2" onclick="setLang('tr')">TR</span>
+            <span class="badge bg-light text-dark p-2" onclick="setLang('ru')">RU</span>
+            <span class="badge bg-light text-dark p-2" onclick="setLang('uz')">UZ</span>
+            <span class="badge bg-light text-dark p-2" onclick="setLang('en')">EN</span>
+        </div>
+    </div>
+    <div class="container mt-4">
+        <div class="row g-3">
+            <div class="col-6 col-md-4"><div class="menu-card" onclick="location.href='musteriler.html'"><i class="fa fa-users text-primary"></i><h6 data-i18n="cust">MÜŞTERİLER</h6></div></div>
+            <div class="col-6 col-md-4"><div class="menu-card" onclick="location.href='urunler.html'"><i class="fa fa-box text-info"></i><h6 data-i18n="prod">ÜRÜNLER</h6></div></div>
+            <div class="col-6 col-md-4"><div class="menu-card" onclick="location.href='irsaliye_yeni.html'"><i class="fa fa-file-invoice text-success"></i><h6 data-i18n="new">YENİ İRSALİYE</h6></div></div>
+            <div class="col-6 col-md-4"><div class="menu-card" onclick="location.href='gecmis.html'"><i class="fa fa-history text-warning"></i><h6 data-i18n="hist">GEÇMİŞ</h6></div></div>
+            <div class="col-6 col-md-4"><div class="menu-card" onclick="localStorage.clear(); location.href='index.html'"><i class="fa fa-sign-out-alt text-secondary"></i><h6 data-i18n="exit">ÇIKIŞ</h6></div></div>
+        </div>
+    </div>
+    <script>
+        const translations = {
+            tr: { cust: "MÜŞTERİLER", prod: "ÜRÜNLER", new: "YENİ İRSALİYE", hist: "GEÇMİŞ", exit: "ÇIKIŞ" },
+            ru: { cust: "КЛИЕНТЫ", prod: "ТОВАРЫ", new: "НАКЛАДНОЙ", hist: "ИСТОРИЯ", exit: "ВЫХОД" },
+            uz: { cust: "MIJOZLAR", prod: "MAHSULOTLAR", new: "YANGI YUK XATI", hist: "TARIX", exit: "CHIQISH" },
+            en: { cust: "CUSTOMERS", prod: "PRODUCTS", new: "NEW WAYBILL", hist: "HISTORY", exit: "EXIT" }
+        };
+        const user = JSON.parse(localStorage.getItem('user'));
+        document.getElementById('welcomeText').innerText = user.adSoyad;
+
+        function setLang(l) { localStorage.setItem('ardmus_lang', l); apply(); }
+        function apply() {
+            const l = localStorage.getItem('ardmus_lang') || 'tr';
+            const d = translations[l];
+            document.querySelectorAll('[data-i18n]').forEach(el => { el.innerText = d[el.getAttribute('data-i18n')]; });
+        }
+        apply();
+    </script>
+</body>
+</html>

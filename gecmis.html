@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style> .card-irs { background: white; border-radius: 10px; padding: 12px; margin-bottom: 10px; border-left: 5px solid #2c3e50; cursor:pointer; } </style>
+</head>
+<body class="bg-light">
+    <div class="bg-dark text-white p-2 d-flex justify-content-between align-items-center mb-2">
+        <a href="menu.html" class="btn btn-sm btn-outline-light">Geri</a>
+        <h6 class="m-0">İrsaliye Geçmişi</h6>
+        <div style="width:40px"></div>
+    </div>
+    <div class="container mt-2">
+        <div id="list"></div>
+    </div>
+    <script>
+        const user = JSON.parse(localStorage.getItem('user'));
+        const baseApi = "https://waybill.bsite.net/api";
+        async function yukle() {
+            const res = await fetch(`${baseApi}/Irsaliye/liste/${user.id || user.Id}`);
+            const data = await res.json();
+            const div = document.getElementById('list'); div.innerHTML = "";
+            data.forEach(i => {
+                div.innerHTML += `
+                    <div class="card-irs shadow-sm" onclick="location.href='imza.html?id=${i.id || i.Id}'">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>#${(i.id || i.Id).toString().padStart(6,'0')}</strong> - ${i.musteriAdi || i.MusteriAdi}<br>
+                                <small class="text-muted">${new Date(i.tarih || i.Tarih).toLocaleDateString()}</small>
+                            </div>
+                            <div class="fw-bold text-success">${(i.toplamTutar || i.ToplamTutar).toFixed(2)} TL</div>
+                        </div>
+                    </div>`;
+            });
+        }
+        yukle();
+    </script>
+</body>
+</html>
