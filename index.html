@@ -15,6 +15,14 @@
         .lang-btn { cursor: pointer; opacity: 0.6; transition: 0.3s; font-size: 14px; font-weight: bold; }
         .lang-btn.active { opacity: 1; border-bottom: 2px solid #2c3e50; }
     </style>
+    <script>
+    if ('serviceWorker' in navigator) {
+        // Alt klasörde çalıştığı için yolu ./sw.js olarak güncelledik
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('Servis İşçisi Kayıtlı!', reg))
+            .catch(err => console.log('Kayıt Hatası!', err));
+    }
+</script>
 </head>
 <body>
     <div class="login-card">
