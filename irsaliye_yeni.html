@@ -1,121 +1,80 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ardmus - Yeni İrsaliye</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yeni İrsaliye</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { background-color: #f0f2f5; font-family: sans-serif; }
-        .irsaliye-kagit { background: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); font-family: 'Times New Roman', serif; color: #3b6ebb; width: 96%; max-width: 600px; margin: 10px auto; min-height: 500px; }
-        .mavi-tablo { width: 100%; border-collapse: collapse; border: 1px solid #3b6ebb; }
-        .mavi-tablo th { border: 1px solid #3b6ebb; padding: 5px; text-align: center; background: #f0f8ff; font-size: 12px; }
-        .mavi-tablo td { border: 1px solid #3b6ebb; padding: 4px; font-size: 13px; font-weight: bold; color: #000; text-align: center; height: 28px; }
-    </style>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <style>.kagit-box { background: white; border: 1px solid #3b6ebb; padding: 10px; font-size: 12px; }</style>
 </head>
-<body>
-    <!-- DİL VE ÜST BAR -->
-    <div class="bg-dark text-white p-2 d-flex justify-content-between align-items-center">
-        <a href="menu.html" class="btn btn-outline-light btn-sm"><i class="fa fa-arrow-left"></i> <span data-lang="menu">Menü</span></a>
-        <div class="fw-bold" data-lang="pageTitle">YENİ İRSALİYE</div>
-        <div>
-            <span class="btn btn-sm btn-outline-light py-0" onclick="setLang('tr')">TR</span>
-            <span class="btn btn-sm btn-outline-light py-0" onclick="setLang('ru')">RU</span>
-            <span class="btn btn-sm btn-outline-light py-0" onclick="setLang('uz')">UZ</span>
+<body class="p-2">
+    <div class="card p-2 mb-2 shadow-sm">
+        <label class="small fw-bold">Müşteri Seçin:</label>
+        <input list="mList" id="mInput" class="form-control form-control-sm border-primary" onchange="mSec()">
+        <datalist id="mList"></datalist>
+    </div>
+    <div class="card p-2 mb-2 shadow-sm">
+        <select id="uSec" class="form-select form-select-sm mb-2" onchange="uFiyat()"><option value="">-- Ürün Seçin --</option></select>
+        <div class="row g-1">
+            <div class="col-4"><input type="number" id="mik" class="form-control form-control-sm" placeholder="Mik"></div>
+            <div class="col-4"><input type="number" id="fyt" class="form-control form-control-sm" placeholder="Fiyat"></div>
+            <div class="col-4"><button class="btn btn-primary btn-sm w-100" onclick="ekle()">EKLE</button></div>
         </div>
     </div>
-
-    <div class="container mt-2">
-        <!-- GİRİŞ PANELİ -->
-        <div class="card p-3 mb-2 shadow-sm">
-            <label class="form-label small fw-bold" data-lang="lblCustomer">Müşteri Seç (Ara):</label>
-            <input list="mList" id="mInput" class="form-control form-control-sm border-primary" onchange="mSecildi()">
-            <datalist id="mList"></datalist>
-
-            <div class="row g-2 mt-2">
-                <div class="col-12">
-                    <select id="uSec" class="form-select form-select-sm" onchange="uFiyat()">
-                        <option value="">-- Ürün Seçin --</option>
-                    </select>
-                </div>
-                <div class="col-4"><input type="number" id="mik" class="form-control form-control-sm" placeholder="Miktar"></div>
-                <div class="col-4"><input type="number" id="fyt" class="form-control form-control-sm" placeholder="Fiyat"></div>
-                <div class="col-4"><button class="btn btn-primary btn-sm w-100 fw-bold" onclick="ekle()">+ EKLE</button></div>
-            </div>
-        </div>
-
-        <!-- KAĞIT ÖNİZLEME -->
-        <div class="irsaliye-kagit shadow-sm" id="kagit">
-            <div class="text-center fw-bold fs-4 mb-2" data-lang="k_baslik">İRSALİYE</div>
-            <div class="mb-2"><strong>Müşteri:</strong> <span id="yaziMusteri" class="border-bottom d-inline-block w-75">...</span></div>
-            <table class="mavi-tablo">
-                <thead><tr><th>Ürün</th><th width="50">Mik</th><th width="50">Birim</th><th width="70">Tutar</th></tr></thead>
-                <tbody id="irsGovde"></tbody>
-                <tfoot><tr><th colspan="3" class="text-end pe-2">Total:</th><th id="irsToplam">0.00</th></tr></tfoot>
-            </table>
-        </div>
-
-        <button class="btn btn-success w-100 mt-3 py-3 fw-bold shadow" onclick="kaydet()">KAYDET VE İMZAYA GEÇ</button>
+    <div class="kagit-box shadow-sm">
+        <div class="text-center fw-bold border-bottom mb-2" style="color:#3b6ebb">İRSALİYE</div>
+        <div id="yaziM">...</div>
+        <table class="table table-sm table-bordered mt-2">
+            <thead><tr><th>Ürün</th><th>Mik</th><th>Tutar</th></tr></thead>
+            <tbody id="govde"></tbody>
+        </table>
+        <div class="text-end fw-bold">TOTAL: <span id="toplam">0.00</span></div>
     </div>
+    <button class="btn btn-success w-100 mt-2 p-3 fw-bold" onclick="kaydet()">KAYDET VE İMZAYA GEÇ</button>
 
     <script>
-        const translations = {
-            tr: { menu: "Menü", pageTitle: "YENİ İRSALİYE", lblCustomer: "Müşteri Adı:", k_baslik: "İRSALİYE" },
-            ru: { menu: "Меню", pageTitle: "НОВАЯ НАКЛАДНАЯ", lblCustomer: "Покупатель:", k_baslik: "НАКЛАДНАЯ" },
-            uz: { menu: "Menyu", pageTitle: "YANGI YUK XATI", lblCustomer: "Mijoz Ismi:", k_baslik: "YUK XATI" }
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyDRsM12xt29bDBMbQq0_nZlibqS7Rsnxws", authDomain: "ardmus2026.firebaseapp.com", projectId: "ardmus2026", storageBucket: "ardmus2026.firebasestorage.app", messagingSenderId: "530757931677", appId: "1:530757931677:web:228238a4f3b1b2fcad7a74" };
+        firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
         const user = JSON.parse(localStorage.getItem('user'));
-        const baseApi = "https://waybill.bsite.net/api";
         let products = []; let clients = []; let items = [];
 
         async function init() {
-            const resC = await fetch(`${baseApi}/Musteriler/${user.id || user.Id}`); clients = await resC.json();
-            clients.forEach(c => { document.getElementById('mList').innerHTML += `<option value="${c.unvan || c.Unvan}">`; });
-            const resU = await fetch(`${baseApi}/Urunler/${user.id || user.Id}`); products = await resU.json();
-            products.forEach(u => { document.getElementById('uSec').innerHTML += `<option value="${u.id || u.Id}">${u.urunAdi || u.UrunAdi}</option>`; });
-            setLang(localStorage.getItem('ardmus_lang') || 'tr');
+            const snapC = await db.collection("Musteriler").where("kullaniciId", "==", user.id).get();
+            snapC.forEach(doc => { clients.push({id: doc.id, ...doc.data()}); document.getElementById('mList').innerHTML += `<option value="${doc.data().unvan}">`; });
+            const snapU = await db.collection("Urunler").where("kullaniciId", "==", user.id).get();
+            snapU.forEach(doc => { products.push({id: doc.id, ...doc.data()}); document.getElementById('uSec').innerHTML += `<option value="${doc.id}">${doc.data().urunAdi}</option>`; });
         }
-
-        function setLang(l) {
-            localStorage.setItem('ardmus_lang', l);
-            const d = translations[l];
-            document.querySelectorAll('[data-lang]').forEach(el => { el.innerText = d[el.getAttribute('data-lang')]; });
-        }
-
-        function mSecildi() { document.getElementById('yaziMusteri').innerText = document.getElementById('mInput').value; }
+        function mSec() { document.getElementById('yaziM').innerText = document.getElementById('mInput').value; }
         function uFiyat() {
-            const u = products.find(x => (x.id || x.Id) == document.getElementById('uSec').value);
-            if(u) document.getElementById('fyt').value = u.birimFiyat || u.BirimFiyat;
+            const u = products.find(x => x.id == document.getElementById('uSec').value);
+            if (u) document.getElementById('fyt').value = u.birimFiyat;
         }
-
         function ekle() {
             const s = document.getElementById('uSec');
             const ad = s.options[s.selectedIndex].text;
             const m = document.getElementById('mik').value;
             const f = document.getElementById('fyt').value;
-            items.push({ urunAdi: ad, miktar: m, fiyat: f, tutar: m * f, birim: "TA" });
+            items.push({ urunAdi: ad, miktar: m, fiyat: f, tutar: m * f });
             draw();
         }
-
         function draw() {
-            const g = document.getElementById('irsGovde'); g.innerHTML = ""; let t = 0;
-            items.forEach((x, i) => { 
-                t += x.tutar; 
-                g.innerHTML += `<tr><td>${x.urunAdi}</td><td>${x.miktar}</td><td>${x.birim}</td><td>${x.tutar.toFixed(2)}</td></tr>`; 
-            });
-            for(let i=items.length; i<10; i++) g.innerHTML += `<tr><td></td><td></td><td></td><td></td></tr>`;
-            document.getElementById('irsToplam').innerText = t.toFixed(2);
+            const g = document.getElementById('govde'); g.innerHTML = ""; let t = 0;
+            items.forEach(i => { t += i.tutar; g.innerHTML += `<tr><td>${i.urunAdi}</td><td>${i.miktar}</td><td>${i.tutar.toFixed(2)}</td></tr>`; });
+            document.getElementById('toplam').innerText = t.toFixed(2);
         }
-
         async function kaydet() {
-            const mAd = document.getElementById('mInput').value;
-            const c = clients.find(x => (x.unvan || x.Unvan) == mAd);
-            const res = await fetch(`${baseApi}/Irsaliye/kaydet`, {
-                method:'POST', headers:{'Content-Type':'application/json'},
-                body: JSON.stringify({ kullaniciId: user.id || user.Id, musteriId: c ? (c.id || c.Id) : 0, musteriAdi: mAd, toplamTutar: document.getElementById('irsToplam').innerText, teslimEden: user.adSoyad, satirlar: items })
+            const docRef = await db.collection("Irsaliyeler").add({
+                kullaniciId: user.id,
+                musteriAdi: document.getElementById('mInput').value,
+                toplamTutar: document.getElementById('toplam').innerText,
+                tarih: new Date().toISOString(),
+                teslimEden: user.adSoyad,
+                satirlar: items,
+                imzaEden: "", imzaAlan: "", teslimAlan: ""
             });
-            const d = await res.json(); location.href = "imza.html?id=" + d.id;
+            location.href = "imza.html?id=" + docRef.id;
         }
         init();
     </script>
