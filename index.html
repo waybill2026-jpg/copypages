@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ardmus 2026 - Giriş</title>
@@ -15,6 +18,7 @@
         .lang-btn { cursor: pointer; opacity: 0.6; transition: 0.3s; font-size: 14px; font-weight: bold; }
         .lang-btn.active { opacity: 1; border-bottom: 2px solid #2c3e50; }
     </style>
+    
     <script>
     if ('serviceWorker' in navigator) {
         // Alt klasörde çalıştığı için yolu ./sw.js olarak güncelledik
