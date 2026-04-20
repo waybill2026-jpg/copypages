@@ -1,6 +1,18 @@
-self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open('ardmus-v1').then((cache) => cache.addAll(['index.html'])));
+const cacheName = 'ardmus-v1';
+const assets = ['./', './index.html', './menu.html', './logo.png'];
+
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(cacheName).then(cache => {
+      cache.addAll(assets);
+    })
+  );
 });
-self.addEventListener('fetch', (e) => {
-  e.respondWith(caches.match(e.request).then((res) => res || fetch(e.request)));
+
+self.addEventListener('fetch', e => {
+  e.respondWith(
+    caches.match(e.request).then(res => {
+      return res || fetch(e.request);
+    })
+  );
 });
